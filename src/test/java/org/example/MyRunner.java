@@ -8,5 +8,6 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
     stepNotifications = true,
     features="src/test/resources/features/",
-    glue="org.example")
-public class AcceptanceTestSuite {}
+    glue="org.example",
+    tags = "@PublishListenMessageWithoutKey")
+public class MyRunner {}
