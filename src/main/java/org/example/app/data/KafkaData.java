@@ -1,6 +1,7 @@
 package org.example.app.data;
 
 import lombok.Data;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.Producer;
 import org.springframework.stereotype.Component;
 
@@ -14,4 +15,6 @@ import org.springframework.stereotype.Component;
 public class KafkaData {
    private String model;
    private Producer<String, String> producer;
+   private Consumer<String, String> consumer;
+   private String variable;
 }

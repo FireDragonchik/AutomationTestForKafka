@@ -9,8 +9,12 @@ import org.example.app.ConfigSteps;
 import org.example.app.data.KafkaData;
 import org.example.app.properties.KafkaProperties;
 import org.example.app.utilities.KafkaUtility;
+import org.example.app.utilities.ValueUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author nikolaus.wijaya on 18/02/2023
@@ -32,8 +36,10 @@ public class KafkaSteps extends ScenarioSteps {
 
   @Given("System prepare message that want to publish with variable: {} description: {} and value: {}")
   public void prepareMessage(String variable, String desc, String value) {
-    String model= kafkaProperties.get("model-send-message").replace("${variable}",variable)
-    .replace("${description}",desc).replace("${value}",value);
+    kafkaData.setVariable(ValueUtility.setStringValue(variable));
+    String model= kafkaProperties.get("model-send-message").replace("${variable}",
+        kafkaData.getVariable()).replace("${description}",desc)
+        .replace("${value}",value);
     kafkaData.setModel(model);
     System.out.println(kafkaData.getModel());
   }
@@ -52,5 +58,18 @@ public class KafkaSteps extends ScenarioSteps {
         kafkaProperties.get("clientId")));
     kafkaUtility.publishEventToKafka(kafkaData.getProducer(),topic,kafkaData.getModel(),key);
 
+  }
+
+  @When("System listen message for kafka topic {}")
+  public void listenMessageKafka(String topic) {
+    kafkaData.setConsumer(kafkaUtility.createConsumer(kafkaProperties.get("server"),
+        kafkaProperties.get("groupId"),topic));
+  }
+
+  @Then("validate system success to listen related message")
+  public void validateSystemSuccessToListenRelatedMessage() throws InterruptedException {
+    assertThat("kafka message is not match",
+        kafkaUtility.findMessageByVariable(kafkaData.getConsumer(),kafkaData.getVariable()),
+        equalTo(kafkaData.getModel()));
   }
 }
