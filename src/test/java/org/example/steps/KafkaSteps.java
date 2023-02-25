@@ -1,6 +1,5 @@
 package org.example.steps;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -56,7 +55,9 @@ public class KafkaSteps extends ScenarioSteps {
   public void publishMessageTo(String key , String topic) {
     kafkaData.setProducer(kafkaUtility.createProducer(kafkaProperties.get("server"),
         kafkaProperties.get("clientId")));
-    kafkaUtility.publishEventToKafka(kafkaData.getProducer(),topic,kafkaData.getModel(),key);
+    kafkaData.setKey(ValueUtility.setStringValue(key));
+    kafkaUtility.publishEventToKafka(kafkaData.getProducer(),topic,kafkaData.getModel(),
+        kafkaData.getKey());
 
   }
 
@@ -66,10 +67,16 @@ public class KafkaSteps extends ScenarioSteps {
         kafkaProperties.get("groupId"),topic));
   }
 
-  @Then("validate system success to listen related message")
-  public void validateSystemSuccessToListenRelatedMessage() throws InterruptedException {
-    assertThat("kafka message is not match",
-        kafkaUtility.findMessageByVariable(kafkaData.getConsumer(),kafkaData.getVariable()),
-        equalTo(kafkaData.getModel()));
+  @Then("validate system success to listen related message by {}")
+  public void validateSystemSuccessToListenRelatedMessage(String condition) throws InterruptedException {
+    if (condition.equalsIgnoreCase("message")){
+      assertThat("kafka message is not match",
+          kafkaUtility.findMessageByBody(kafkaData.getConsumer(),kafkaData.getVariable()),
+          equalTo(kafkaData.getModel()));
+    }else{
+      assertThat("kafka message is not match",
+          kafkaUtility.findMessageByKey(kafkaData.getConsumer(),kafkaData.getKey()),
+          equalTo(kafkaData.getModel()));
+    }
   }
 }

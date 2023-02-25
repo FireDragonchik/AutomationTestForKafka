@@ -63,7 +63,7 @@ public class KafkaUtility {
     }
   }
 
-  public String findMessageByVariable(Consumer<String, String> consumer, String variable) throws InterruptedException {
+  public String findMessageByBody(Consumer<String, String> consumer, String valueBody) throws InterruptedException {
     final int giveUp = 150;
     int noRecordsCount = 0;
     String value = "";
@@ -81,7 +81,47 @@ public class KafkaUtility {
       }
 
       for (ConsumerRecord<String, String> record : consumerRecords) {
-        if (record.value().contains(variable)) {
+        if (record.value().contains(valueBody)) {
+          value = record.value();
+          status = true;
+          break;
+        }
+      }
+      consumerRecords.forEach(record -> {
+        System.out.printf("Consumer Record:(%s, %s, %s, %s)\n",
+            record.key(), record.value(),
+            record.partition(), record.offset());
+      });
+
+      consumer.commitAsync();
+      if (status) {
+        break;
+      }
+    }
+
+    consumer.close();
+    return value;
+  }
+
+  public String findMessageByKey(Consumer<String, String> consumer, String key) throws InterruptedException {
+    final int giveUp = 150;
+    int noRecordsCount = 0;
+    String value = "";
+    boolean status = false;
+    while (true) {
+      final ConsumerRecords<String, String> consumerRecords =
+          consumer.poll(1000);
+
+      if (consumerRecords.count() == 0) {
+        noRecordsCount++;
+        if (noRecordsCount > giveUp)
+          break;
+        else
+          continue;
+      }
+
+      for (ConsumerRecord<String, String> record : consumerRecords) {
+        if (record.key().contains(key)) {
           value = record.value();
           status = true;
           break;

@@ -9,5 +9,5 @@ import org.junit.runner.RunWith;
     stepNotifications = true,
     features="src/test/resources/features/",
     glue="org.example",
-    tags = "@PublishListenMessageWithoutKey")
+    tags = "@KafkaFeature")
 public class MyRunner {}

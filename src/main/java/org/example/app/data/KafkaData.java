@@ -17,4 +17,5 @@ public class KafkaData {
    private Producer<String, String> producer;
    private Consumer<String, String> consumer;
    private String variable;
+   private String key;
 }
