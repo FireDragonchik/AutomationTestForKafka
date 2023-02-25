@@ -10,7 +10,11 @@ or sometimes we need to produce event to validate our apps consumer run correctl
 This automation code is one of the simple example how to produce and consume event from kafka.
 
 ### Detail of automation:
-This Automation code is created using BDD concept with Serenity frammewrok which has been integrated with Spring Boot
+This automation code is created using BDD concept with Serenity frammewrok which has been integrated with Spring Boot
+- Serenity version: 2.6.0
+- Spring boot version: 2.7.5
+- Spring kafka version: 3.0.2
+- hamcrest version: 2.2
 
 ### Requirement:
 - Java 11
