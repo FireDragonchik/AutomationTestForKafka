@@ -20,6 +20,10 @@ This Automation code is created using BDD concept with Serenity frammewrok which
 ### How to start
 - Makesure you already have kafka in your local pc/ server
 - create kafka topic with name first_topic, this is the example comment to create kafka topic from CLI
-    kafka-topics.sh --bootstrap-server localhost:9092 --topic first_topic --create --partitions 3 --replication-factor 1
+> kafka-topics.sh --bootstrap-server localhost:9092 --topic first_topic --create --partitions 3 --replication-factor 1
 - clone this automation code and wait all dependency successfully downloaded
 - run this automation using MyRunner.java
+
+### Serenity Report
+![alt text](https://github.com/AryawanWijaya/example-kafka-automation-serenityBdd/blob/master/SerenityReportExample.jpg?raw=true)
+![alt text](https://github.com/AryawanWijaya/example-kafka-automation-serenityBdd/blob/master/KafkaReportExample.jpg?raw=true)
