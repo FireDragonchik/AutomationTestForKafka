@@ -1,8 +1,11 @@
 package tests;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.junit.Assert;
 import org.junit.Test;
-import utils.KafkaTestUtils;
+import utils.ConsumerUtils;
+import utils.KafkaAdminUtils;
+import utils.ProducerUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,13 +19,14 @@ public class TestKafka {
     @Test
     public void test() {
 
-        KafkaTestUtils.createTopicIfNotExists(TOPIC_NAME, 3, (short) 1);
-        KafkaTestUtils.subscribeToTopics(Collections.singletonList(TOPIC_NAME));
-        Future<RecordMetadata> recordMetadataFuture = KafkaTestUtils.sendMessage(TOPIC_NAME, "key_1", "Test Message 1");
-        List<Future<RecordMetadata>> futureList = KafkaTestUtils.sendMessages(TOPIC_NAME, "base-key-", "base-value-");
+        KafkaAdminUtils.createTopicIfNotExists(TOPIC_NAME, 3, (short) 1);
+        ConsumerUtils.subscribeToTopics(Collections.singletonList(TOPIC_NAME));
+        Future<RecordMetadata> recordMetadataFuture = ProducerUtils.sendMessage(TOPIC_NAME, "key_1", "Test Message 1");
+        List<Future<RecordMetadata>> messagesList = ProducerUtils.sendMessages(TOPIC_NAME, "base-key-", "base-value-");
+        messagesList.add(recordMetadataFuture);
 //        KafkaTestUtils.printAllTopicsList();
 //        KafkaTestUtils.printAllTopicsInfo();
-
-        KafkaTestUtils.readSubscribedTopicMessages();
+        Assert.assertEquals("Not all messages were read",
+                messagesList.size(), ConsumerUtils.readSubscribedTopicMessages().count());
     }
 }
